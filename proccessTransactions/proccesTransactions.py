@@ -1,5 +1,5 @@
 import pandas as pd
-import requests
+import requests ## permite enviar peticiones HTTP request using python
 import json
 
 url = 'http://127.0.0.1:5000/csv_migration'
@@ -16,10 +16,10 @@ filesSchema = {'departments':{'id':'int64',
                                   'job_id':'float64'},
                 }
 
-path = './data_challenge_files/'
+path = './files/'
 
 for file, schema in filesSchema.items():
-
+    #print(list(schema.keys()))
     df = pd.read_csv(f'{path}{file}.csv', header=None) #Leo el csv lo convierto en df
     df.columns = list(schema.keys()) ## asigna los valores de del esquema definido al dataframe
 
