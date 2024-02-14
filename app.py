@@ -3,10 +3,10 @@ from flask_restful import Resource, Api, reqparse
 from io import StringIO
 from datetime import datetime
 
-app = Flask(__name__)
+app = Flask(__name__) ## creando servidor API
 api = Api(app)
 
-class csv_migration(Resource):
+class proccestransactions(Resource):
         
     def post(self):        
         # Params required in the post request
@@ -43,27 +43,9 @@ class csv_migration(Resource):
         if len(df) > 1000:
             return {'message':'El archivo supera las 1000 filas.'}, 400
         
-        # SQL DB connection
-        cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
-        cursor = cnxn.cursor()
+       
 
-        # Insert Dataframe into SQL Server:
-        for index, row in df.iterrows():
-            try:
-                if fileName == 'hired_employees':
-                    cursor.execute("INSERT INTO dbo.hired_employees (id,eName,datetime,department_id,job_id) values(?,?,?,?,?)", int(row.id), str(row.eName), datetime.strptime(row.datetime, '%Y-%m-%dT%H:%M:%SZ'), int(row.department_id), int(row.job_id))
-                elif fileName == 'departments':
-                    cursor.execute("INSERT INTO dbo.departments (id,department) values(?,?)", int(row.id), str(row.department))
-                elif fileName == 'jobs':
-                    cursor.execute("INSERT INTO dbo.jobs (id,job) values(?,?)", int(row.id), str(row.job))
-            except:
-                print('Data Error')
-        cnxn.commit()
-        cursor.close()
-        
-        return {'message': "Datos CSV procesados correctamete."}, 200
-
-api.add_resource(csv_migration, '/csv_migration')
+api.add_resource(proccestransactions, '/proccestransactions')
 
 if __name__ == "__main__":
     app.run(debug=True)

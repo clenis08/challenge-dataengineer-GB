@@ -2,7 +2,7 @@ import pandas as pd
 import requests ## permite enviar peticiones HTTP request using python
 import json
 
-url = 'http://127.0.0.1:5000/csv_migration'
+url = 'http://127.0.0.1:5000/proccestransactions'
 
 
 filesSchema = {'departments':{'id':'int64',
