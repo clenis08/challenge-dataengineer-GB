@@ -6,14 +6,15 @@ url = 'http://127.0.0.1:5000/proccestransactions'
 
 
 filesSchema = {'departments':{'id':'int64',
-                            'department':'object'},
+                            'department':'object'}
+                            ,
                 'jobs':{'id':'int64',
                         'job':'object'},
                 'hired_employees':{'id':'int64',
                                   'Name':'object',
                                   'datetime':'object',
                                   'department_id':'float64',
-                                  'job_id':'float64'},
+                                  'job_id':'float64'}
                 }
 
 path = './files/'
@@ -38,13 +39,13 @@ for file, schema in filesSchema.items():
 
         df_to_Send = df.iloc[initPos:finPos,:]
         csvFile = df_to_Send.to_csv(index=False)
-
+        print(file)
         datos = {"fileName": file,
                  "fileData": csvFile}
 
         # Request
         respuesta = requests.post(url, data=json.dumps(datos), headers = {"Content-Type": "application/json"})
-
+        
         if respuesta.status_code == 200:
             print('Datos enviados correctamente.')
         else:

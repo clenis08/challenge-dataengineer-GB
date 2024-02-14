@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from flask_restful import Resource, Api, reqparse
 import pandas as pd
 from io import StringIO
-
+from sqlconnection import connectionSQL
 
 filesSchema = {'departments':{'id':'int64',
                             'department':'object'},
@@ -48,9 +48,17 @@ class proccestransactions(Resource):
             
         except:
             return {'message': "Archivo no valido."}, 500
-
+        
         if len(df) > 1000:
-            return {'message':'El archivo supera las 1000 filas.'}, 400
+            return {'message':'El archivo supera las 1000 filas.'}, 200
+        
+        ## Conecta a sql database
+        print(f"insertar datos en tabla {fileName}")
+        cursor,cnxn,engine=connectionSQL()
+        ## inserta los datos en la tabla 
+        df.to_sql(fileName, engine, schema='dbo', if_exists='append', index=False)
+        cursor.commit()
+        cnxn.close()
         return {'message': "Datos CSV procesados correctamete."}, 200
 
 api.add_resource(proccestransactions, '/proccestransactions')
