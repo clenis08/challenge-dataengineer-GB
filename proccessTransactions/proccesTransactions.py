@@ -10,7 +10,7 @@ filesSchema = {'departments':{'id':'int64',
                 'jobs':{'id':'int64',
                         'job':'object'},
                 'hired_employees':{'id':'int64',
-                                  'eName':'object',
+                                  'Name':'object',
                                   'datetime':'object',
                                   'department_id':'float64',
                                   'job_id':'float64'},
@@ -19,7 +19,7 @@ filesSchema = {'departments':{'id':'int64',
 path = './files/'
 
 for file, schema in filesSchema.items():
-    #print(list(schema.keys()))
+    print(list(schema.keys()))
     df = pd.read_csv(f'{path}{file}.csv', header=None) #Leo el csv lo convierto en df
     df.columns = list(schema.keys()) ## asigna los valores de del esquema definido al dataframe
 

@@ -1,8 +1,20 @@
 from flask import Flask, render_template
 from flask_restful import Resource, Api, reqparse
+import pandas as pd
 from io import StringIO
-from datetime import datetime
 
+
+filesSchema = {'departments':{'id':'int64',
+                            'department':'object'},
+                'jobs':{'id':'int64',
+                        'job':'object'},
+                'hired_employees':{'id':'int64',
+                                  'Name':'object',
+                                  'datetime':'object',
+                                  'department_id':'float64',
+                                  'job_id':'float64'},
+
+                }
 app = Flask(__name__) ## creando servidor API
 api = Api(app)
 
@@ -31,10 +43,7 @@ class proccestransactions(Resource):
             expected_dtypes = list(filesSchema[fileName.lower()].values())
             input_dtypes = [str(list(df.dtypes)[i]) for i in range(len(list(df.dtypes)))]
 
-            expected_columns = list(filesSchema[fileName.lower()].keys())
-            input_columns = list(df.columns)
-
-            if (expected_dtypes != input_dtypes) or (expected_columns != input_columns):
+            if (expected_dtypes != input_dtypes):
                 return {'message': "Esquema incompatible con la tabla de destino"}, 400
             
         except:
@@ -42,8 +51,7 @@ class proccestransactions(Resource):
 
         if len(df) > 1000:
             return {'message':'El archivo supera las 1000 filas.'}, 400
-        
-       
+        return {'message': "Datos CSV procesados correctamete."}, 200
 
 api.add_resource(proccestransactions, '/proccestransactions')
 
