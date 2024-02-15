@@ -60,14 +60,13 @@ from base_query
 where qty > (select avg(qty) from base_query)
 '''
 
-@app.route('/totalDep')
-def totalDep():
-    # SQL DB connection
-    cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
-    cursor = cnxn.cursor()
+@app.route('/quarterDepartments')
+def quarterDepartments():
 
-    # Inserting data from SQL DB into pandas dataframe
-    df = pd.read_sql(quarters_query, cnxn)
+    cursor,cnxn,engine=connectionSQL()
+    
+    ## Enviado query
+    df = pd.read_sql(quarter_departments, cnxn)
 
     cnxn.commit() 
     cursor.close()
@@ -77,14 +76,15 @@ def totalDep():
 
 # end-point to obtain number of employees hired of each department that hired more
 # employees than the mean of employees hired in 2021 for all the departments.
-@app.route('/mostDep')
-def mostDep():
-    cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
-    cursor = cnxn.cursor()
+@app.route('/meanDepartmens')
+def meanDepartments():
 
-    df = pd.read_sql(median_query, cnxn)
+    cursor,cnxn,engine=connectionSQL()
+    
+    ## Enviado query
+    df = pd.read_sql(mean_departments, cnxn)
 
-    cnxn.commit()
+    cnxn.commit() 
     cursor.close()
 
     return render_template('index.html',  tables=[df.to_html(classes='data')], titles=df.columns.values)
