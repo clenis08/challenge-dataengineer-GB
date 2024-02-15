@@ -3,20 +3,41 @@ from flask_restful import Resource, Api, reqparse
 import pandas as pd
 from io import StringIO
 from sqlconnection import connectionSQL
+from variables import filesSchema
+from querys import mean_departments, quarter_departments
 
-filesSchema = {'departments':{'id':'int64',
-                            'department':'object'},
-                'jobs':{'id':'int64',
-                        'job':'object'},
-                'hired_employees':{'id':'int64',
-                                  'Name':'object',
-                                  'datetime':'object',
-                                  'department_id':'float64',
-                                  'job_id':'float64'},
-
-                }
 app = Flask(__name__) ## creando servidor API
 api = Api(app)
+
+# end-point to obtain number of employees hired of each department that hired more
+@app.route('/quarterDepartments')
+def quarterDepartments():
+
+    cursor,cnxn,engine=connectionSQL()
+    
+    ## Enviado query
+    df = pd.read_sql(quarter_departments, cnxn)
+
+    cnxn.commit() 
+    cursor.close()
+
+    # Data presentation
+    return render_template('index.html',  tables=[df.to_html(classes='data')], titles=df.columns.values)
+
+
+# employees than the mean of employees hired in 2021 for all the departments.
+@app.route('/meanDepartments')
+def meanDepartments():
+
+    cursor,cnxn,engine=connectionSQL()
+    
+    ## Enviado query
+    df = pd.read_sql(mean_departments, cnxn)
+
+    cnxn.commit() 
+    cursor.close()
+
+    return render_template('index.html',  tables=[df.to_html(classes='data')], titles=df.columns.values)
 
 class proccestransactions(Resource):
         
