@@ -2,9 +2,6 @@ import pandas as pd
 import requests ## permite enviar peticiones HTTP request using python
 import json
 from variables import * 
-url = 'http://127.0.0.1:5000/proccestransactions'
-
-path = './files/'
 
 for file, schema in filesSchema.items():
     print(list(schema.keys()))

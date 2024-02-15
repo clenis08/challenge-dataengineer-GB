@@ -9,6 +9,7 @@ from querys import mean_departments, quarter_departments
 app = Flask(__name__) ## creando servidor API
 api = Api(app)
 
+# end-point to obtain number of employees hired of each department that hired more
 @app.route('/quarterDepartments')
 def quarterDepartments():
 
@@ -23,9 +24,9 @@ def quarterDepartments():
     # Data presentation
     return render_template('index.html',  tables=[df.to_html(classes='data')], titles=df.columns.values)
 
-# end-point to obtain number of employees hired of each department that hired more
+
 # employees than the mean of employees hired in 2021 for all the departments.
-@app.route('/meanDepartmens')
+@app.route('/meanDepartments')
 def meanDepartments():
 
     cursor,cnxn,engine=connectionSQL()
