@@ -1,7 +1,7 @@
 import pandas as pd
 import fastavro
-from functions.variables import path
-from functions.sqlconnection import connectionSQL
+from variables import path
+from sqlconnection import connectionSQL
 from datetime import datetime
 
 
