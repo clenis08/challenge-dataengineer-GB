@@ -18,6 +18,77 @@ filesSchema = {'departments':{'id':'int64',
 app = Flask(__name__) ## creando servidor API
 api = Api(app)
 
+quarter_departments = '''
+SELECT 
+    department
+    ,job
+    ,CASE WHEN Q=1 THEN qty else 0 end as Q1
+    ,CASE WHEN Q=2 THEN qty else 0 end as Q2
+    ,CASE WHEN Q=3 THEN qty else 0 end as Q3
+    ,CASE WHEN Q=4 THEN qty else 0 end as Q4
+FROM (
+	SELECT distinct
+		d.department AS department
+        ,j.job AS job
+		,DATEPART(QUARTER, datetime) as Q
+		,COUNT(*) AS qty
+	FROM dbo.hired_employees e
+	inner join dbo.jobs j
+		ON e.job_id = j.id
+	inner join dbo.departments d
+		ON e.department_id = d.id
+	WHERE year(e.datetime) = 2021
+    GROUP BY job, department, DATEPART(QUARTER, datetime)
+) AS basequery ORDER BY department
+'''
+
+mean_departments = '''
+WITH base_query AS (
+
+ SELECT distinct
+        d.id as id
+		,d.department AS department
+		,COUNT(name) AS qty
+	FROM dbo.hired_employees e
+	inner join dbo.departments d
+		ON e.department_id = d.id
+    WHERE year(e.datetime) = 2021
+    GROUP BY d.id, d.department
+)
+SELECT  *
+from base_query
+where qty > (select avg(qty) from base_query)
+'''
+
+@app.route('/totalDep')
+def totalDep():
+    # SQL DB connection
+    cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+    cursor = cnxn.cursor()
+
+    # Inserting data from SQL DB into pandas dataframe
+    df = pd.read_sql(quarters_query, cnxn)
+
+    cnxn.commit() 
+    cursor.close()
+
+    # Data presentation
+    return render_template('index.html',  tables=[df.to_html(classes='data')], titles=df.columns.values)
+
+# end-point to obtain number of employees hired of each department that hired more
+# employees than the mean of employees hired in 2021 for all the departments.
+@app.route('/mostDep')
+def mostDep():
+    cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+    cursor = cnxn.cursor()
+
+    df = pd.read_sql(median_query, cnxn)
+
+    cnxn.commit()
+    cursor.close()
+
+    return render_template('index.html',  tables=[df.to_html(classes='data')], titles=df.columns.values)
+
 class proccestransactions(Resource):
         
     def post(self):        
