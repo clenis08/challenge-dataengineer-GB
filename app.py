@@ -2,9 +2,9 @@ from flask import Flask, render_template
 from flask_restful import Resource, Api, reqparse
 import pandas as pd
 from io import StringIO
-from sqlconnection import connectionSQL
-from variables import filesSchema
-from querys import mean_departments, quarter_departments
+from functions.sqlconnection import connectionSQL
+from functions.variables import filesSchema
+from functions.querys import mean_departments, quarter_departments
 
 app = Flask(__name__) ## creando servidor API
 api = Api(app)
