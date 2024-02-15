@@ -18,14 +18,14 @@ for file, schema in filesSchema.items():
     for pack in range(qt):
         initPos = pack*1000
 
-        # In the last packet only the remaining data should be sent
+        #Valido cual fue el ultimo dato enviado y cual queda por enviar
         finPos = initPos + len(df) % 1000 if pack == qt else pack*1000 + 1000
 
-        df_to_Send = df.iloc[initPos:finPos,:]
-        csvFile = df_to_Send.to_csv(index=False)
+        df_to_Send = df.iloc[initPos:finPos,:] # segmento el data frame
+        csvFile = df_to_Send.to_csv(index=False) #convierto en csv
         print(file)
         datos = {"fileName": file,
-                 "fileData": csvFile}
+                 "fileData": csvFile} #empaqueto en un diccionario
 
         # Request
         respuesta = requests.post(url, data=json.dumps(datos), headers = {"Content-Type": "application/json"})
